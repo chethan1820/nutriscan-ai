@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriScan AI — Food Health Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Background -->
+    <div class="bg-mesh"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-inner">
+            <div class="logo">
+                <span class="logo-icon">🥗</span>
+                <span class="logo-text">NutriScan<span class="logo-accent">AI</span></span>
+            </div>
+            <nav class="nav">
+                <a href="#analyze" class="nav-link">Analyze</a>
+                <a href="#history" class="nav-link" id="nav-history">History</a>
+                <button class="btn-profile" id="btnProfile">My Profile</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">🤖 AI-Powered Nutrition Analysis</div>
+            <h1 class="hero-title">Know What You <span class="gradient-text">Eat</span></h1>
+            <p class="hero-sub">Upload a photo or type any food — get instant nutrition facts, health scores, and personalized recommendations powered by deep learning.</p>
+            <div class="hero-stats">
+                <div class="stat"><span class="stat-num">101</span><span class="stat-label">Food Classes</span></div>
+                <div class="stat-divider"></div>
+                <div class="stat"><span class="stat-num">~87%</span><span class="stat-label">AI Accuracy</span></div>
+                <div class="stat-divider"></div>
+                <div class="stat"><span class="stat-num">500+</span><span class="stat-label">Nutrition Facts</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main App -->
+    <main class="main-app" id="analyze">
+        <!-- Input Tabs -->
+        <div class="card input-card">
+            <div class="tab-switcher">
+                <button class="tab active" data-tab="image">📷 Image Upload</button>
+                <button class="tab" data-tab="text">✍️ Text Input</button>
+            </div>
+
+            <!-- Image Upload Tab -->
+            <div class="tab-content active" id="tab-image">
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-inner" id="uploadInner">
+                        <div class="upload-icon">📸</div>
+                        <p class="upload-title">Drop your food photo here</p>
+                        <p class="upload-sub">or click to browse · PNG, JPG, WEBP · max 10MB</p>
+                        <button class="btn-upload" onclick="document.getElementById('fileInput').click()">Choose Image</button>
+                        <input type="file" id="fileInput" accept="image/*" hidden>
+                    </div>
+                    <div class="preview-container" id="previewContainer" style="display:none">
+                        <img id="imagePreview" alt="Food preview">
+                        <button class="btn-clear" id="btnClearImage">✕ Remove</button>
+                    </div>
+                </div>
+                <button class="btn-analyze" id="btnAnalyzeImage" disabled>
+                    <span class="btn-icon">🔍</span> Analyze Food Image
+                </button>
+            </div>
+
+            <!-- Text Input Tab -->
+            <div class="tab-content" id="tab-text">
+                <div class="text-input-area">
+                    <div class="input-group">
+                        <label>Food Name or Dish</label>
+                        <div class="search-wrap">
+                            <input type="text" id="foodNameInput" placeholder="e.g. Grilled Salmon, Caesar Salad..." class="food-input">
+                            <div class="autocomplete-dropdown" id="autocomplete" style="display:none"></div>
+                        </div>
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group half">
+                            <label>Portion Size (grams)</label>
+                            <input type="number" id="portionInput" value="100" min="10" max="1000" class="food-input">
+                        </div>
+                        <div class="input-group half">
+                            <label>Or list ingredients</label>
+                            <input type="text" id="ingredientsInput" placeholder="chicken, rice, broccoli..." class="food-input">
+                        </div>
+                    </div>
+                </div>
+                <button class="btn-analyze" id="btnAnalyzeText">
+                    <span class="btn-icon">⚡</span> Analyze Nutrition
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading-card" id="loadingCard" style="display:none">
+            <div class="loading-spinner"></div>
+            <p class="loading-text" id="loadingText">Analyzing your food...</p>
+            <div class="loading-steps" id="loadingSteps">
+                <div class="step active" id="step1">🔍 Detecting food</div>
+                <div class="step" id="step2">📊 Calculating nutrition</div>
+                <div class="step" id="step3">⚕️ Assessing health risks</div>
+                <div class="step" id="step4">💡 Generating recommendations</div>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div class="results-section" id="results" style="display:none">
+            <!-- Food Identity -->
+            <div class="card result-header-card">
+                <div class="food-identity">
+                    <div class="food-emoji" id="foodEmoji">🍽️</div>
+                    <div class="food-info">
+                        <h2 class="food-name" id="foodName">—</h2>
+                        <p class="food-confidence" id="foodConfidence"></p>
+                    </div>
+                    <div class="health-badge" id="healthBadge">
+                        <span class="health-emoji" id="healthEmoji">—</span>
+                        <span class="health-label" id="healthLabel">—</span>
+                    </div>
+                </div>
+                <!-- Health Score Meter -->
+                <div class="score-meter-wrap">
+                    <div class="score-label">Health Score</div>
+                    <div class="score-meter">
+                        <div class="score-track">
+                            <div class="score-fill" id="scoreFill"></div>
+                        </div>
+                        <span class="score-value" id="scoreValue">—</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nutrition Grid -->
+            <div class="card nutrition-card">
+                <h3 class="card-title">📊 Nutritional Values</h3>
+                <div class="macro-grid" id="macroGrid">
+                    <!-- Filled by JS -->
+                </div>
+                <div class="daily-values" id="dailyValues">
+                    <!-- Filled by JS -->
+                </div>
+            </div>
+
+            <!-- Health Risks -->
+            <div class="card risks-card" id="risksCard" style="display:none">
+                <h3 class="card-title">⚠️ Health Risk Assessment</h3>
+                <div class="risks-list" id="risksList"></div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="card recs-card">
+                <h3 class="card-title">💡 Recommendations</h3>
+                <div class="recs-tabs">
+                    <button class="rec-tab active" data-rec="tips">Tips</button>
+                    <button class="rec-tab" data-rec="alternatives">Alternatives</button>
+                    <button class="rec-tab" data-rec="lifestyle">Lifestyle</button>
+                    <button class="rec-tab" data-rec="pairing">Meal Pairing</button>
+                </div>
+                <div class="rec-content" id="recContent"></div>
+                <div class="portion-advice" id="portionAdvice"></div>
+            </div>
+
+            <!-- Top Predictions (image only) -->
+            <div class="card predictions-card" id="predictionsCard" style="display:none">
+                <h3 class="card-title">🎯 Top AI Predictions</h3>
+                <div class="predictions-list" id="predictionsList"></div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-row">
+                <button class="btn-secondary" onclick="resetAnalysis()">🔄 Analyze Another</button>
+                <button class="btn-secondary" onclick="showHistory()">📋 View History</button>
+                <button class="btn-primary" onclick="saveToLog()">💾 Save to Log</button>
+            </div>
+        </div>
+
+        <!-- History Panel -->
+        <div class="card history-card" id="historyCard" style="display:none">
+            <div class="history-header">
+                <h3 class="card-title">📋 Food History</h3>
+                <button class="btn-close" onclick="hideHistory()">✕</button>
+            </div>
+            <div class="history-summary" id="historySummary"></div>
+            <div class="history-list" id="historyList"></div>
+        </div>
+    </main>
+
+    <!-- Profile Modal -->
+    <div class="modal-overlay" id="profileModal" style="display:none">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>👤 Health Profile</h3>
+                <button class="btn-close" onclick="closeProfile()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="profile-intro">Complete your profile for personalized recommendations</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Age</label>
+                        <input type="number" id="profileAge" placeholder="30" min="1" max="120" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <select id="profileGender" class="form-input">
+                            <option value="">Select...</option>
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Non-binary</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Weight (kg)</label>
+                        <input type="number" id="profileWeight" placeholder="70" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Height (cm)</label>
+                        <input type="number" id="profileHeight" placeholder="170" class="form-input">
+                    </div>
+                    <div class="form-group full">
+                        <label>Goal</label>
+                        <select id="profileGoal" class="form-input">
+                            <option value="">Select goal...</option>
+                            <option>Weight Loss</option>
+                            <option>Muscle Gain</option>
+                            <option>Maintenance</option>
+                            <option>Endurance / Athletic</option>
+                            <option>General Health</option>
+                        </select>
+                    </div>
+                    <div class="form-group full">
+                        <label>Health Conditions (comma-separated)</label>
+                        <input type="text" id="profileConditions" placeholder="diabetes, hypertension, heart disease..." class="form-input">
+                    </div>
+                    <div class="form-group full">
+                        <label>Dietary Preferences</label>
+                        <input type="text" id="profileDiet" placeholder="vegetarian, gluten-free, keto..." class="form-input">
+                    </div>
+                </div>
+                <button class="btn-analyze" onclick="saveProfile()">Save Profile</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <footer class="footer">
+        <p>NutriScan AI · Powered by EfficientNet + Food-101 · Built for health-conscious decisions</p>
+    </footer>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Environment variables
+.env
+
+# Dataset
+dataset/
+
+# Training outputs
+checkpoints/
+logs/
+
+# Database / runtime data
+instance/
+**/instance/
+**/logs/
+
+# Uploads
+uploads/
+**/uploads/
+
+# Python cache
+**/__pycache__/
+
+# Large trained model
+models/*.pth
+models/*.pt
+models/*.keras
+models/*.h5
+models/*.onnx
+
+# Generated images
+*.jpg
+*.jpeg
+*.png
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
